@@ -47,7 +47,7 @@ public class LoginManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("Connected to master server with player name: " + PhotonNetwork.NickName);
-        PhotonNetwork.LoadLevel("Home");
+        PhotonNetwork.LoadLevel("HomeScene");
     }
     #endregion
 }
