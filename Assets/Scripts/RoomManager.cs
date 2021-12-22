@@ -3,22 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
+using TMPro;
 
 public class RoomManager :MonoBehaviourPunCallbacks
 {
     private string mapType;
 
+    public TextMeshProUGUI OccupancyRateText_School;
+    public TextMeshProUGUI OccupancyRateText_Outdoor;
+
     // Start is called before the first frame update
     void Start()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (!PhotonNetwork.IsConnectedAndReady)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
+        else
+        {
+            PhotonNetwork.JoinLobby();
+        }
     }
 
     #region UI Callback Methods
@@ -43,6 +49,12 @@ public class RoomManager :MonoBehaviourPunCallbacks
     #endregion
 
     #region Photon Callback Methods
+    public override void OnConnectedToMaster()
+    {
+        Debug.Log("Reconnected to server");
+        PhotonNetwork.JoinLobby();
+    }
+
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log(message);
@@ -80,12 +92,42 @@ public class RoomManager :MonoBehaviourPunCallbacks
     {
         Debug.Log(newPlayer.NickName + " has joined the room! Player count: " + PhotonNetwork.CurrentRoom.PlayerCount);
     }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        if (roomList.Count == 0)
+        {
+            // No room exists
+            OccupancyRateText_School.text = "0 / 20";
+            OccupancyRateText_Outdoor.text = "0 / 20";
+        }
+
+        foreach(RoomInfo room in roomList)
+        {
+            Debug.Log(room.Name);
+            if (room.Name.Contains(MultiplayerVRConstants.MAP_TYPE_VALUE_OUTDOOR))
+            {
+                Debug.Log("Room is Outdoor. Player count is: " + room.PlayerCount);
+                OccupancyRateText_Outdoor.text = room.PlayerCount + " / 20";
+            }
+            else if (room.Name.Contains(MultiplayerVRConstants.MAP_TYPE_VALUE_SCHOOL))
+            {
+                Debug.Log("Room is School. Player count is: " + room.PlayerCount);
+                OccupancyRateText_School.text = room.PlayerCount + " / 20";
+            }
+        }
+    }
+
+    public override void OnJoinedLobby()
+    {
+        Debug.Log("Joined the lobby");
+    }
     #endregion
 
     #region Private Methods
     private void CreateAndJoinRoom()
     {
-        string randomRoomName = "Room_" + UnityEngine.Random.Range(0, 10000);
+        string randomRoomName = "Room_" + mapType + UnityEngine.Random.Range(0, 10000);
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 20;
 

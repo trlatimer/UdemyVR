@@ -6,10 +6,38 @@ using Photon.Realtime;
 
 public class VirtualWorldManager : MonoBehaviourPunCallbacks
 {
+
+    public static VirtualWorldManager instance;
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        instance = this;
+    }
+
+    public void LeaveRoomAndLoadHomeScene()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
+
     #region Pun Callback Methods
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         Debug.Log(newPlayer.NickName + " has joined the room! Player count: " + PhotonNetwork.CurrentRoom.PlayerCount);
+    }
+
+    public override void OnLeftRoom()
+    {
+        PhotonNetwork.Disconnect();
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        PhotonNetwork.LoadLevel("HomeScene");
     }
     #endregion
 }
