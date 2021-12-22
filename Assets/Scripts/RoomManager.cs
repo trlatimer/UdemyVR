@@ -7,10 +7,12 @@ using System;
 
 public class RoomManager :MonoBehaviourPunCallbacks
 {
+    private string mapType;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     // Update is called once per frame
@@ -25,6 +27,19 @@ public class RoomManager :MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRandomRoom();
     }
 
+    public void OnEnterButtonClicked_Outdoor()
+    {
+        mapType = MultiplayerVRConstants.MAP_TYPE_VALUE_OUTDOOR;
+        ExitGames.Client.Photon.Hashtable expectedCustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { MultiplayerVRConstants.MAP_TYPE_KEY, mapType } };
+        PhotonNetwork.JoinRandomRoom(expectedCustomRoomProperties, 0);
+    }
+
+    public void OnEnterButtonClicked_School()
+    {
+        mapType = MultiplayerVRConstants.MAP_TYPE_VALUE_SCHOOL;
+        ExitGames.Client.Photon.Hashtable expectedCustomRoomProperties = new ExitGames.Client.Photon.Hashtable() { { MultiplayerVRConstants.MAP_TYPE_KEY, mapType } };
+        PhotonNetwork.JoinRandomRoom(expectedCustomRoomProperties, 0);
+    }
     #endregion
 
     #region Photon Callback Methods
@@ -49,6 +64,14 @@ public class RoomManager :MonoBehaviourPunCallbacks
             if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(MultiplayerVRConstants.MAP_TYPE_KEY, out mapType))
             {
                 Debug.Log("Joined room with map: " + mapType.ToString());
+                if ((string) mapType == MultiplayerVRConstants.MAP_TYPE_VALUE_SCHOOL)
+                {
+                    PhotonNetwork.LoadLevel("Wolrd_School");
+                }
+                else if ((string) mapType == MultiplayerVRConstants.MAP_TYPE_VALUE_OUTDOOR)
+                {
+                    PhotonNetwork.LoadLevel("Wolrd_Outdoor");
+                }
             }
         }
     }
@@ -68,7 +91,7 @@ public class RoomManager :MonoBehaviourPunCallbacks
 
         string[] roomPropsInLobby = { "map" };
 
-        ExitGames.Client.Photon.Hashtable customRoomProperties = new ExitGames.Client.Photon.Hashtable() { {MultiplayerVRConstants.MAP_TYPE_KEY, MultiplayerVRConstants.MAP_TYPE_VALUE_SCHOOL } };
+        ExitGames.Client.Photon.Hashtable customRoomProperties = new ExitGames.Client.Photon.Hashtable() { {MultiplayerVRConstants.MAP_TYPE_KEY, mapType } };
 
         roomOptions.CustomRoomPropertiesForLobby = roomPropsInLobby;
         roomOptions.CustomRoomProperties = customRoomProperties;
