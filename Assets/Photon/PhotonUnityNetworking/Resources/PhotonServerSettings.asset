@@ -16,7 +16,7 @@ MonoBehaviour:
     AppIdRealtime: a32f5c1f-c1d4-4e4b-aca7-45f1ea29870e
     AppIdFusion: 
     AppIdChat: 
-    AppIdVoice: 
+    AppIdVoice: aebf25a3-a205-40a5-ba94-2af5804f649e
     AppVersion: 0.1
     UseNameServer: 1
     FixedRegion: 
@@ -42,6 +42,8 @@ MonoBehaviour:
   - StartNetworkGrabbing
   - StopNetworkGrabbing
   - InitializeSelectedAvatarModel
+  - CantHearYou
+  - HeresWhy
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
