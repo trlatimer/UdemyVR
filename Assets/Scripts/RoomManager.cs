@@ -78,11 +78,11 @@ public class RoomManager :MonoBehaviourPunCallbacks
                 Debug.Log("Joined room with map: " + mapType.ToString());
                 if ((string) mapType == MultiplayerVRConstants.MAP_TYPE_VALUE_SCHOOL)
                 {
-                    PhotonNetwork.LoadLevel("Wolrd_School");
+                    PhotonNetwork.LoadLevel("World_School");
                 }
                 else if ((string) mapType == MultiplayerVRConstants.MAP_TYPE_VALUE_OUTDOOR)
                 {
-                    PhotonNetwork.LoadLevel("Wolrd_Outdoor");
+                    PhotonNetwork.LoadLevel("World_Outdoor");
                 }
             }
         }
